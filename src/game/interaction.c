@@ -760,14 +760,18 @@ u32 interact_water_ring(struct MarioState *m, UNUSED u32 interactType, struct Ob
     return FALSE;
 }
 
+s8 gNonstop = 0;
+
 u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     u32 starIndex;
     u32 starGrabAction = ACT_STAR_DANCE_EXIT;
-    u32 noExit = (o->oInteractionSubtype & INT_SUBTYPE_NO_EXIT) != 0;
+    u32 noExit = gNonstop || (o->oInteractionSubtype & INT_SUBTYPE_NO_EXIT) != 0;
     u32 grandStar = (o->oInteractionSubtype & INT_SUBTYPE_GRAND_STAR) != 0;
 
     if (m->health >= 0x100) {
-        mario_stop_riding_and_holding(m);
+		if (!gNonstop)
+			mario_stop_riding_and_holding(m);
+		
         queue_rumble_data(5, 80);
 
         if (!noExit) {
@@ -821,7 +825,8 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
             return set_mario_action(m, ACT_JUMBO_STAR_CUTSCENE, 0);
         }
 
-        return set_mario_action(m, starGrabAction, noExit + 2 * grandStar);
+        if (!gNonstop)
+			return set_mario_action(m, starGrabAction, noExit + 2 * grandStar);
     }
 
     return FALSE;
