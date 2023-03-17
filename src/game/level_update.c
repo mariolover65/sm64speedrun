@@ -179,6 +179,17 @@ s8 D_8032C9E0 = 0;
 u8 unused3[4];
 u8 unused4[2];
 
+void soft_reset(void){
+	if (gCurrLevelNum==1)
+		return;
+	
+	sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
+	sWarpDest.type = WARP_TYPE_CHANGE_LEVEL;
+	sWarpDest.levelNum = 1;
+	sWarpDest.areaIdx = 1;
+	gGlobalTimer = 1;
+}
+
 u16 level_control_timer(s32 timerOp) {
     switch (timerOp) {
         case TIMER_CONTROL_SHOW:
@@ -1015,7 +1026,7 @@ s32 play_mode_paused(void) {
         raise_background_noise(1);
         gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
         set_play_mode(PLAY_MODE_NORMAL);
-    } else if (gPauseScreenMode == 2) {
+    } else {
         // Exit level
         if (gDebugLevelSelect) {
             fade_into_special_warp(-9, 1);
@@ -1024,14 +1035,8 @@ s32 play_mode_paused(void) {
             fade_into_special_warp(0, 0);
             gSavedCourseNum = COURSE_NONE;
         }
-    } else if (gPauseScreenMode == 3) {
-        // We should only be getting "int 3" to here
-        initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
-        fade_into_special_warp(0, 0);
-        game_exit();
+		gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
     }
-
-    gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
 
     return 0;
 }
@@ -1266,7 +1271,7 @@ s32 lvl_init_from_save_file(UNUSED s16 arg0, s32 levelNum) {
 #endif
     sWarpDest.type = WARP_TYPE_NOT_WARPING;
     sDelayedWarpOp = WARP_OP_NONE;
-    gShouldNotPlayCastleMusic = !save_file_exists(gCurrSaveFileNum - 1) && gCLIOpts.SkipIntro == 0 && configSkipIntro == 0;
+    gShouldNotPlayCastleMusic = !save_file_exists(gCurrSaveFileNum - 1);
 
     gCurrLevelNum = levelNum;
     gCurrCourseNum = COURSE_NONE;
