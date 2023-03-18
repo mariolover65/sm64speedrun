@@ -30,6 +30,7 @@
 #include "course_table.h"
 #include "thread6.h"
 #include "../../include/libc/stdlib.h"
+#include "ingame_menu.h"
 
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
@@ -158,11 +159,11 @@ struct CreditsEntry sCreditsSequence[] = {
 struct MarioState gMarioStates[1];
 struct HudDisplay gHudDisplay;
 s16 sCurrPlayMode;
-u16 D_80339ECA;
+u16 sUnused80339ECA;
 s16 sTransitionTimer;
 void (*sTransitionUpdate)(s16 *);
 struct WarpDest sWarpDest;
-s16 D_80339EE0;
+s16 sSpecialWarpLevelNum;
 s16 sDelayedWarpOp;
 s16 sDelayedWarpTimer;
 s16 sSourceWarpNodeId;
@@ -175,9 +176,11 @@ s8 gShouldNotPlayCastleMusic;
 
 struct MarioState *gMarioState = &gMarioStates[0];
 u8 unused1[4] = { 0 };
-s8 D_8032C9E0 = 0;
+s8 sWarpCheckpointIsActive = 0;
 u8 unused3[4];
 u8 unused4[2];
+
+extern s16 gMenuMode;
 
 void soft_reset(void){
 	if (gCurrLevelNum==1)
@@ -187,6 +190,8 @@ void soft_reset(void){
 	sWarpDest.type = WARP_TYPE_CHANGE_LEVEL;
 	sWarpDest.levelNum = 1;
 	sWarpDest.areaIdx = 1;
+	reset_dialog_render_state();
+	gMenuMode = -1;
 	gGlobalTimer = 1;
 }
 
@@ -217,10 +222,10 @@ u16 level_control_timer(s32 timerOp) {
 }
 
 u32 pressed_pause(void) {
-    u32 val4 = get_dialog_id() >= 0;
+    u32 inDialog = get_dialog_id() >= 0;
     u32 intangible = (gMarioState->action & ACT_FLAG_INTANGIBLE) != 0;
 
-    if (!intangible && !val4 && !gWarpTransition.isActive && sDelayedWarpOp == WARP_OP_NONE
+    if (!intangible && !inDialog && !gWarpTransition.isActive && sDelayedWarpOp == WARP_OP_NONE
         && (gPlayer1Controller->buttonPressed & START_BUTTON)) {
         return TRUE;
     }
@@ -230,13 +235,13 @@ u32 pressed_pause(void) {
 
 void set_play_mode(s16 playMode) {
     sCurrPlayMode = playMode;
-    D_80339ECA = 0;
+    sUnused80339ECA = 0;
 }
 
-void warp_special(s32 arg) {
+void warp_special(s32 levelNum) {
     sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
-    D_80339ECA = 0;
-    D_80339EE0 = arg;
+    sUnused80339ECA = 0;
+    sSpecialWarpLevelNum = levelNum;
 }
 
 void fade_into_special_warp(u32 arg, u32 color) {
@@ -679,7 +684,7 @@ void initiate_painting_warp(void) {
                 warpNode = *pWarpNode;
 
                 if (!(warpNode.destLevel & 0x80)) {
-                    D_8032C9E0 = check_warp_checkpoint(&warpNode);
+                    sWarpCheckpointIsActive = check_warp_checkpoint(&warpNode);
                 }
 
                 initiate_warp(warpNode.destLevel & 0x7F, warpNode.destArea, warpNode.destNode, 0);
@@ -1112,7 +1117,7 @@ s32 play_mode_change_level(void) {
         if (sWarpDest.type != WARP_TYPE_NOT_WARPING) {
             return sWarpDest.levelNum;
         } else {
-            return D_80339EE0;
+            return sSpecialWarpLevelNum;
         }
     }
 
@@ -1129,7 +1134,7 @@ static s32 play_mode_unused(void) {
         if (sWarpDest.type != WARP_TYPE_NOT_WARPING) {
             return sWarpDest.levelNum;
         } else {
-            return D_80339EE0;
+            return sSpecialWarpLevelNum;
         }
     }
 
@@ -1166,13 +1171,13 @@ s32 update_level(void) {
 }
 
 s32 init_level(void) {
-    s32 val4 = 0;
+    s32 useCutsceneFade = 0;
 
     set_play_mode(PLAY_MODE_NORMAL);
 
     sDelayedWarpOp = WARP_OP_NONE;
     sTransitionTimer = 0;
-    D_80339EE0 = 0;
+    sSpecialWarpLevelNum = 0;
 
     if (gCurrCreditsEntry == NULL) {
         gHudDisplay.flags = HUD_DISPLAY_DEFAULT;
@@ -1205,13 +1210,13 @@ s32 init_level(void) {
                         set_mario_action(gMarioState, ACT_IDLE, 0);
                     } else if (gCLIOpts.SkipIntro == 0 && configSkipIntro == 0) {
                         set_mario_action(gMarioState, ACT_INTRO_CUTSCENE, 0);
-                        val4 = 1;
+                        useCutsceneFade = 1;
                     }
                 }
             }
         }
 
-        if (val4 != 0) {
+        if (useCutsceneFade != 0) {
             play_transition(WARP_TRANSITION_FADE_FROM_COLOR, 0x5A, 0xFF, 0xFF, 0xFF);
         } else {
             play_transition(WARP_TRANSITION_FADE_FROM_STAR, 0x10, 0xFF, 0xFF, 0xFF);
@@ -1288,13 +1293,15 @@ s32 lvl_init_from_save_file(UNUSED s16 arg0, s32 levelNum) {
     return levelNum;
 }
 
+// returns 0 to skip the star select menu
 s32 lvl_set_current_level(UNUSED s16 arg0, s32 levelNum) {
-    s32 val4 = D_8032C9E0;
+    s32 checkpointActive = sWarpCheckpointIsActive;
 
-    D_8032C9E0 = 0;
+    sWarpCheckpointIsActive = 0;
     gCurrLevelNum = levelNum;
     gCurrCourseNum = gLevelToCourseNumTable[levelNum - 1];
 
+	// true if playing demo, in credits, or in a castle level
     if (gCurrDemoInput != NULL || gCurrCreditsEntry != NULL || gCurrCourseNum == COURSE_NONE) {
         return 0;
     }
@@ -1312,7 +1319,8 @@ s32 lvl_set_current_level(UNUSED s16 arg0, s32 levelNum) {
         disable_warp_checkpoint();
     }
 
-    if (gCurrCourseNum > COURSE_STAGES_MAX || val4 != 0) {
+	// if in a bonus stage or loading a warp checkpoint
+    if (gCurrCourseNum > COURSE_STAGES_MAX || checkpointActive != 0) {
         return 0;
     }
 

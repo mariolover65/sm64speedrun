@@ -66,7 +66,7 @@ extern struct MarioState gMarioStates[];
 extern struct MarioState *gMarioState;
 
 extern s16 sCurrPlayMode;
-extern u16 D_80339ECA;
+extern u16 sUnused80339ECA;
 extern s16 sTransitionTimer;
 extern void (*sTransitionUpdate)(s16 *);
 extern u8 unused3[4];
@@ -81,7 +81,7 @@ struct WarpDest {
 
 extern struct WarpDest sWarpDest;
 
-extern s16 D_80339EE0;
+extern s16 sSpecialWarpLevelNum;
 extern s16 sDelayedWarpOp;
 extern s16 sDelayedWarpTimer;
 extern s16 sSourceWarpNodeId;
