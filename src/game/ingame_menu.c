@@ -937,10 +937,6 @@ void create_dialog_box_with_response(s16 dialog) {
 void reset_dialog_render_state(void) {
     level_set_transition(0, 0);
 
-    if (gDialogBoxType == DIALOG_TYPE_ZOOM) {
-        trigger_cutscene_dialog(2);
-    }
-
     gDialogBoxScale = 19.0f;
     gDialogBoxOpenTimer = 90.0f;
     gDialogBoxState = DIALOG_STATE_OPENING;
