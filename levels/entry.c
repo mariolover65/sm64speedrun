@@ -4,6 +4,7 @@
 #include "level_commands.h"
 
 #include "levels/intro/header.h"
+#include "levels/menu/header.h"
 
 #include "make_const_nonconst.h"
 
@@ -12,6 +13,15 @@ const LevelScript level_script_entry[] = {
     SLEEP(/*frames*/ 2),
     BLACKOUT(/*active*/ FALSE),
     SET_REG(/*value*/ 0),
-    EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_entry_1),
+    EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_entry_logo),
     JUMP(/*target*/ level_script_entry),
+};
+
+const LevelScript level_script_entry_alt[] = {
+    INIT_LEVEL(),
+    SLEEP(/*frames*/ 2),
+    BLACKOUT(/*active*/ FALSE),
+    SET_REG(/*value*/ 0),
+    EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_main_menu_file_select),
+    JUMP(/*target*/ level_script_entry_alt),
 };

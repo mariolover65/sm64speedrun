@@ -16,14 +16,14 @@ extern const f32 intro_seg7_table_0700C790[];
 extern const f32 intro_seg7_table_0700C880[];
 
 // script
-extern const LevelScript level_intro_entry_1[];
-extern const LevelScript level_intro_entry_2[];
-extern const LevelScript level_intro_entry_3[];
-extern const LevelScript level_intro_entry_4[];
-extern const LevelScript script_intro_L1[];
-extern const LevelScript script_intro_L2[];
-extern const LevelScript script_intro_L3[];
-extern const LevelScript script_intro_L4[];
-extern const LevelScript script_intro_L5[];
+extern const LevelScript level_intro_entry_logo[];
+extern const LevelScript level_intro_entry_normal[];
+extern const LevelScript level_intro_entry_game_over[];
+extern const LevelScript level_intro_entry_level_select[];
+extern const LevelScript script_goto_file_select[];
+extern const LevelScript script_goto_level_select[];
+extern const LevelScript script_goto_level[];
+extern const LevelScript script_goto_demo[];
+extern const LevelScript script_goto_logo[];
 
 #endif

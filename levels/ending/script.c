@@ -32,6 +32,6 @@ const LevelScript level_ending_entry[] = {
     /*14*/ SLEEP(/*frames*/ 120),
     /*15*/ CALL(/*arg*/ 0, /*func*/ lvl_play_the_end_screen_sound),
     // L1:
-    /*17*/ SLEEP(/*frames*/ 1),
-    /*18*/ JUMP(level_ending_entry + 17),
+    /*17*/ SLEEP(/*frames*/ 100),
+	/*18*/ EXIT() // reset game
 };

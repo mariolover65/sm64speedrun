@@ -44,11 +44,11 @@ static const LevelScript script_exec_level_table[2
 #undef DEFINE_LEVEL
 #undef STUB_LEVEL
 
-static const LevelScript script_L1[4];
-static const LevelScript script_L2[4];
-static const LevelScript script_L3[4];
-static const LevelScript script_L4[4];
-static const LevelScript script_L5[4];
+static const LevelScript script_intro_logo[4];
+static const LevelScript script_ending[4];
+static const LevelScript script_intro_normal[4];
+static const LevelScript script_intro_game_over[4];
+static const LevelScript script_intro_level_select[4];
 
 #define STUB_LEVEL(_0, _1, _2, _3, _4, _5, _6, _7, _8)
 #define DEFINE_LEVEL(_0, _1, _2, folder, _4, _5, _6, _7, _8, _9, _10) static const LevelScript script_exec_ ## folder [4 + 1];
@@ -115,35 +115,35 @@ const LevelScript level_main_scripts_entry[] = {
     FREE_LEVEL_POOL(),
     CALL(/*arg*/ 0, /*func*/ lvl_init_from_save_file),
     LOOP_BEGIN(),
-        EXECUTE(/*seg*/ 0x14, _menuSegmentRomStart, _menuSegmentRomEnd, level_main_menu_entry_2),
+        EXECUTE(/*seg*/ 0x14, _menuSegmentRomStart, _menuSegmentRomEnd, level_main_menu_star_select),
         JUMP_LINK(script_exec_level_table),
         SLEEP(/*frames*/ 1),
     LOOP_UNTIL(/*op*/ OP_LT, /*arg*/ 0),
-    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -1, script_L2),
-    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -2, script_L3),
-    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -3, script_L4),
-    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -8, script_L1),
-    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -9, script_L5),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -1, script_ending),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -2, script_intro_normal),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -3, script_intro_game_over),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -8, script_intro_logo),
+    JUMP_IF(/*op*/ OP_EQ, /*arg*/ -9, script_intro_level_select),
 };
 
-static const LevelScript script_L1[] = {
-    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_1),
+static const LevelScript script_intro_logo[] = {
+    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_logo),
 };
 
-static const LevelScript script_L2[] = {
+static const LevelScript script_ending[] = {
     EXIT_AND_EXECUTE(/*seg*/ 0x0E, _endingSegmentRomStart, _endingSegmentRomEnd, level_ending_entry),
 };
 
-static const LevelScript script_L3[] = {
-    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_2),
+static const LevelScript script_intro_normal[] = {
+    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_normal),
 };
 
-static const LevelScript script_L4[] = {
-    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_3),
+static const LevelScript script_intro_game_over[] = {
+    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_game_over),
 };
 
-static const LevelScript script_L5[] = {
-    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_4),
+static const LevelScript script_intro_level_select[] = {
+    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_level_select),
 };
 
 // Include the level jumptable.
