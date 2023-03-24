@@ -60,6 +60,8 @@ static double frame_time = 0.0; // updated in start_frame()
 // GetPerformanceFrequency
 static double perf_freq = 0.0;
 
+extern s8 gResetTrigger;
+
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
   /*  8                        9                            A                         B                            C                     D                            E                            F  */
@@ -227,6 +229,10 @@ static void gfx_sdl_onkeydown(int scancode) {
         configWindow.fullscreen = !configWindow.fullscreen;
         configWindow.settings_changed = true;
     }
+	
+	if (state[SDL_SCANCODE_F1]){
+		gResetTrigger = 1;
+	}
 }
 
 static void gfx_sdl_onkeyup(int scancode) {
