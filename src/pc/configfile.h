@@ -57,6 +57,7 @@ extern bool         configCameraAnalog;
 extern bool         configHUD;
 extern bool         configSkipIntro;
 extern bool         configFileSelectStart;
+extern bool         configAnglerOverride;
 #ifdef DISCORDRPC
 extern bool         configDiscordRPC;
 #endif
