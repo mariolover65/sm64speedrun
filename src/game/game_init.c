@@ -9,6 +9,7 @@
 #include "buffers/framebuffers.h"
 #include "buffers/zbuffer.h"
 #include "engine/level_script.h"
+#include "pc/configfile.h"
 #include "game_init.h"
 #include "main.h"
 #include "memory.h"
@@ -563,6 +564,13 @@ static struct LevelCommand *levelCommandAddr;
 // main game loop thread. runs forever as long as the game
 // continues.
 void thread5_game_loop(UNUSED void *arg) {
+	struct LevelCommand* entry;
+	
+	// start from file select if the config option is enabled
+	if (configFileSelectStart)
+		entry = segmented_to_virtual(level_script_entry_alt);
+	else
+		entry = segmented_to_virtual(level_script_entry);
 
     setup_game_memory();
     init_rumble_pak_scheduler_queue();
@@ -573,7 +581,7 @@ void thread5_game_loop(UNUSED void *arg) {
     set_vblank_handler(2, &gGameVblankHandler, &gGameVblankQueue, (OSMesg) 1);
 
     // point levelCommandAddr to the entry point into the level script data.
-    levelCommandAddr = segmented_to_virtual(level_script_entry);
+    levelCommandAddr = entry;
 
     play_music(SEQ_PLAYER_SFX, SEQUENCE_ARGS(0, SEQ_SOUND_PLAYER), 0);
     set_sound_mode(save_file_get_sound_mode());
