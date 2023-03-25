@@ -186,6 +186,8 @@ void soft_reset(void){
 	if (gCurrLevelNum==1)
 		return;
 	
+	gWarpTransition.isActive = FALSE;
+	gWarpTransition.time = 0;
 	sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
 	sWarpDest.type = WARP_TYPE_CHANGE_LEVEL;
 	sWarpDest.levelNum = 1;
