@@ -58,6 +58,7 @@ extern bool         configHUD;
 extern bool         configSkipIntro;
 extern bool         configFileSelectStart;
 extern bool         configAnglerOverride;
+extern bool         configNonstop;
 #ifdef DISCORDRPC
 extern bool         configDiscordRPC;
 #endif

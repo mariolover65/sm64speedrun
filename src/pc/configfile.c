@@ -92,6 +92,7 @@ bool         configSkipIntro        = false;
 bool         configHUD              = true;
 bool         configFileSelectStart  = false;
 bool         configAnglerOverride   = false;
+bool         configNonstop          = false;
 #ifdef DISCORDRPC
 bool         configDiscordRPC       = true;
 #endif
@@ -142,6 +143,7 @@ static const struct ConfigOption options[] = {
     {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .boolValue = &configSkipIntro},
     {.name = "file_select_start",    .type = CONFIG_TYPE_BOOL, .boolValue = &configFileSelectStart},
 	{.name = "angler_override",      .type = CONFIG_TYPE_BOOL, .boolValue = &configAnglerOverride},
+	{.name = "nonstop",              .type = CONFIG_TYPE_BOOL, .boolValue = &configNonstop},
     #ifdef DISCORDRPC
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
     #endif 
