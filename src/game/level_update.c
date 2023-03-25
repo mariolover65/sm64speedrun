@@ -33,7 +33,6 @@
 #include "ingame_menu.h"
 
 #include "pc/pc_main.h"
-#include "pc/cliopts.h"
 #include "pc/configfile.h"
 
 #define PLAY_MODE_NORMAL 0
@@ -1210,7 +1209,7 @@ s32 init_level(void) {
                 if (gMarioState->action != ACT_UNINITIALIZED) {
                     if (save_file_exists(gCurrSaveFileNum - 1)) {
                         set_mario_action(gMarioState, ACT_IDLE, 0);
-                    } else if (gCLIOpts.SkipIntro == 0 && configSkipIntro == 0) {
+                    } else if (!configSkipIntro) {
                         set_mario_action(gMarioState, ACT_INTRO_CUTSCENE, 0);
                         useCutsceneFade = 1;
                     }

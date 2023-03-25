@@ -4,7 +4,6 @@
 #include "platform.h"
 
 struct PCCLIOptions  {
-    unsigned int SkipIntro;
     unsigned int FullScreen;
     unsigned int PoolSize;
     char ConfigFile[SYS_MAX_PATH];

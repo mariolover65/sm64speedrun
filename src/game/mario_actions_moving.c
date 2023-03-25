@@ -13,7 +13,6 @@
 #include "behavior_data.h"
 #include "thread6.h"
 #include "pc/configfile.h"
-#include "pc/cheats.h"
 
 struct LandingAction {
     s16 numFrames;
@@ -462,15 +461,9 @@ void update_walking_speed(struct MarioState *m) {
     if (m->forwardVel > 48.0f) {
         m->forwardVel = 48.0f;
     }
-
-    /* Handles the "Super responsive controls" cheat. The content of the "else" is Mario's original code for turning around.*/
-
-    if (Cheats.Responsive == true && Cheats.EnableCheats == true ) {
-        m->faceAngle[1] = m->intendedYaw;
-    }
-    else {
-         m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
-    }        
+	
+	m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+            
     apply_slope_accel(m);
 }
 

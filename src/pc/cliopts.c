@@ -1,6 +1,5 @@
 #include "cliopts.h"
 #include "configfile.h"
-#include "cheats.h"
 #include "pc_main.h"
 #include "platform.h"
 #include "macros.h"
@@ -15,7 +14,6 @@ struct PCCLIOptions gCLIOpts;
 
 static void print_help(void) {
     printf("Super Mario 64 PC Port\n");
-    printf("%-20s\tEnables the cheat menu.\n", "--cheats");
     printf("%-20s\tSaves the configuration file as CONFIGNAME.\n", "--configfile CONFIGNAME");
     printf("%-20s\tSets additional data directory name (only 'res' is used by default).\n", "--gamedir DIRNAME");
     printf("%-20s\tOverrides the default save/config path ('!' expands to executable path).\n", "--savepath SAVEPATH");
@@ -46,17 +44,11 @@ void parse_cli_opts(int argc, char* argv[]) {
     memset(&gCLIOpts, 0, sizeof(gCLIOpts));
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--skip-intro") == 0) // Skip Peach Intro
-            gCLIOpts.SkipIntro = 1;
-
-        else if (strcmp(argv[i], "--fullscreen") == 0) // Open game in fullscreen
+        if (strcmp(argv[i], "--fullscreen") == 0) // Open game in fullscreen
             gCLIOpts.FullScreen = 1;
 
         else if (strcmp(argv[i], "--windowed") == 0) // Open game in windowed mode
             gCLIOpts.FullScreen = 2;
-
-        else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
-            Cheats.EnableCheats = true;
 
         else if (strcmp(argv[i], "--poolsize") == 0) // Main pool size
             arg_uint("--poolsize", argv[++i], &gCLIOpts.PoolSize);
