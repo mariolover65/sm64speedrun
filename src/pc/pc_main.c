@@ -29,6 +29,7 @@
 #include "configfile.h"
 #include "controller/controller_api.h"
 #include "controller/controller_keyboard.h"
+#include "controller/controller_angler.h"
 #include "fs/fs.h"
 
 #include "game/game_init.h"
@@ -47,6 +48,7 @@ s8 D_8032C648;
 s8 gDebugLevelSelect;
 s8 gShowProfiler;
 s8 gShowDebugText;
+s8 gResetTrigger;
 
 s32 gRumblePakPfs;
 struct RumbleData gRumbleDataQueue[3];
@@ -61,10 +63,10 @@ extern void thread5_game_loop(void *arg);
 extern void create_next_audio_buffer(s16 *samples, u32 num_samples);
 void game_loop_one_iteration(void);
 
-void dispatch_audio_sptask(struct SPTask *spTask) {
+void dispatch_audio_sptask(UNUSED struct SPTask *spTask) {
 }
 
-void set_vblank_handler(s32 index, struct VblankHandler *handler, OSMesgQueue *queue, OSMesg *msg) {
+void set_vblank_handler(UNUSED s32 index, UNUSED struct VblankHandler *handler, UNUSED OSMesgQueue *queue, UNUSED OSMesg *msg) {
 }
 
 static bool inited = false;
@@ -171,12 +173,19 @@ static void on_anim_frame(double time) {
 }
 #endif
 
+extern s8 gNonstop;
+void soft_reset(void);
+
 void main_func(void) {
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
     const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
 
     configfile_load(configfile_name());
+    
+    if (configNonstop){
+        gNonstop = 1;
+    }
 
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
@@ -214,15 +223,19 @@ void main_func(void) {
     #error No rendering API!
     #endif
 
-    char window_title[96] =
-    "Super Mario 64 EX (" RAPI_NAME ")"
+    char window_title[128] =
+    "Super Mario 64 EX SPEEDRUN (" RAPI_NAME ")"
     #ifdef NIGHTLY
     " nightly " GIT_HASH
     #endif
     ;
-
+    
     gfx_init(wm_api, rendering_api, window_title);
-    wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
+    
+    if (configAnglerOverride)
+        wm_api->set_keyboard_callbacks(angler_on_key_down, angler_on_key_up, angler_on_all_keys_up);
+    else
+        wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
     #if defined(AAPI_SDL1) || defined(AAPI_SDL2)
     if (audio_api == NULL && audio_sdl.init()) 
@@ -258,6 +271,10 @@ void main_func(void) {
     request_anim_frame(on_anim_frame);
 #else
     while (true) {
+        if (gResetTrigger){
+            gResetTrigger = 0;
+            soft_reset();
+        }
         wm_api->main_loop(produce_one_frame);
 #ifdef DISCORDRPC
         discord_update_rich_presence();
