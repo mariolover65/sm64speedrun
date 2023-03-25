@@ -18,6 +18,7 @@
 
 #define ANGLER_C_SCANCODE 46
 #define ANGLER_V_SCANCODE 47
+#define ANGLER_G_SCANCODE 34
 
 #define ANGLER_TAB_SCANCODE 15
 
@@ -178,6 +179,10 @@ static void update_angles(void) {
 	}
 	
 	if (angler_keys_array[ANGLER_C_SCANCODE]){
+		accX *= 0.33f;
+	}
+	
+	if (angler_keys_array[ANGLER_G_SCANCODE]){
 		accX *= 0.5f;
 	}
 	
