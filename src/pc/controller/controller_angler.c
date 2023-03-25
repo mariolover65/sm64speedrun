@@ -16,6 +16,12 @@
 #define ANGLER_D_SCANCODE 32
 #define ANGLER_F_SCANCODE 33
 
+#define ANGLER_Z_SCANCODE 44
+#define ANGLER_X_SCANCODE 45
+#define ANGLER_NP_DIVIDE_SCANCODE 309
+#define ANGLER_NP_TIMES_SCANCODE 55
+#define ANGLER_LCTRL_SCANCODE 29
+
 #define ANGLER_C_SCANCODE 46
 #define ANGLER_V_SCANCODE 47
 #define ANGLER_G_SCANCODE 34
@@ -192,6 +198,24 @@ static void update_angles(void) {
 		accY /= mag;
 	}
 	
+	if (angler_keys_array[ANGLER_NP_DIVIDE_SCANCODE]&&!angler_keys_array[ANGLER_Z_SCANCODE]){
+		accX = 0.0f;
+		accY = 1.0f;
+		accCount = 1;
+	} else if (angler_keys_array[ANGLER_NP_TIMES_SCANCODE]){
+		accX = 1.0f;
+		accY = 0.0f;
+		accCount = 1;
+	} else if (angler_keys_array[ANGLER_X_SCANCODE]){
+		accX = 0.0f;
+		accY = -1.0f;
+		accCount = 1;
+	} else if (angler_keys_array[ANGLER_Z_SCANCODE]){
+		accX = -1.0f;
+		accY = 0.0f;
+		accCount = 1;
+	}
+	
 	if (angler_keys_array[ANGLER_SPACE_SCANCODE]){
 		accX *= 0.32f;
 		accY *= 0.32f;
@@ -208,7 +232,7 @@ static void update_buttons(void) {
 	if (angler_keys_array[ANGLER_NP_3_SCANCODE]||angler_keys_array[ANGLER_NP_1_SCANCODE]){
 		angler_buttons |= A_BUTTON;
 	}
-	if (angler_keys_array[ANGLER_NP_2_SCANCODE]||angler_keys_array[ANGLER_TAB_SCANCODE]){
+	if (angler_keys_array[ANGLER_NP_2_SCANCODE]||angler_keys_array[ANGLER_LCTRL_SCANCODE]){
 		angler_buttons |= B_BUTTON;
 	}
 	if (angler_keys_array[ANGLER_NP_ENTER_SCANCODE]){
