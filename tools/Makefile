@@ -61,10 +61,10 @@ clean:
 	$(MAKE) -C audiofile clean
 
 define COMPILE
-$(1): $($1_SOURCES)
-	$$(CC) $(CFLAGS) $($1_CFLAGS) $$^ -o $$@ $(LDFLAGS) $($1_LDFLAGS)
+$(1): $($2_SOURCES)
+	$(CC) $(CFLAGS) $($2_CFLAGS) $$^ -o $$@ $(LDFLAGS) $($2_LDFLAGS)
 endef
 
-$(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p))))
+$(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p),$(basename $p))))
 
 .PHONY: all clean default
