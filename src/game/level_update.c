@@ -180,6 +180,8 @@ u8 unused3[4];
 u8 unused4[2];
 
 extern s16 gMenuMode;
+extern u8 sTransitionColorFadeCount[4];
+extern u16 sTransitionTextureFadeCount[2];
 
 void soft_reset(void){
 	if (gCurrLevelNum==1)
@@ -195,6 +197,8 @@ void soft_reset(void){
 	reset_dialog_render_state();
 	gMenuMode = -1;
 	gGlobalTimer = 1;
+	bzero(sTransitionColorFadeCount,4);
+	bzero(sTransitionTextureFadeCount,4);
 }
 
 u16 level_control_timer(s32 timerOp) {
